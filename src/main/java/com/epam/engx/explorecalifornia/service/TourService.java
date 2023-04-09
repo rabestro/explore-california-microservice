@@ -19,7 +19,7 @@ public class TourService {
         String duration, String bullets,
         String keywords, String tourPackageName, Difficulty difficulty, Region region
     ) {
-        var tourPackage = tourPackageRepository.findById(tourPackageName).orElseThrow(() ->
+        var tourPackage = tourPackageRepository.findByName(tourPackageName).orElseThrow(() ->
             new RuntimeException("Tour package does not exist: " + tourPackageName));
 
         return tourRepository.save(new Tour(0, title, description, blurb, price, duration,

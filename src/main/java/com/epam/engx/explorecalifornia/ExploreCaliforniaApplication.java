@@ -35,9 +35,7 @@ public class ExploreCaliforniaApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         createTourPackages();
-        long numOfTourPackages = tourPackageService.total();
         createTours(importFile);
-        long numOfTours = tourService.total();
     }
 
     /**
