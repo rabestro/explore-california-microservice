@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.NoSuchElementException;
 
-
 @RestController
 @RequestMapping(path = "/tours/{tourId}/ratings")
 @RequiredArgsConstructor
