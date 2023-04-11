@@ -9,14 +9,7 @@ import com.epam.engx.explorecalifornia.repository.TourRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -68,6 +61,21 @@ public class TourRatingController {
         return Map.of("average", tourRatingRepository.findByPkTourId(tourId).stream()
             .mapToInt(TourRating::getScore).average()
             .orElseThrow(() -> new NoSuchElementException("Tour has no Ratings")));
+    }
+
+    /**
+     * Update score and comment of a Tour Rating
+     *
+     * @param tourId tour identifier
+     * @param ratingDto rating Data Transfer Object
+     * @return The modified Rating DTO.
+     */
+    @PutMapping
+    public RatingDto updateWithPut(@PathVariable(value = "tourId") int tourId, @RequestBody @Validated RatingDto ratingDto) {
+        var rating = verifyTourRating(tourId, ratingDto.customerId());
+        rating.setScore(ratingDto.score());
+        rating.setComment(ratingDto.comment());
+        return new RatingDto(tourRatingRepository.save(rating));
     }
 
     /**
