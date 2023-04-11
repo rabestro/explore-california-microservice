@@ -3,7 +3,7 @@ package com.epam.engx.explorecalifornia.controller;
 import com.epam.engx.explorecalifornia.domain.Tour;
 import com.epam.engx.explorecalifornia.domain.TourRating;
 import com.epam.engx.explorecalifornia.domain.TourRatingPk;
-import com.epam.engx.explorecalifornia.dto.Rating;
+import com.epam.engx.explorecalifornia.dto.RatingDto;
 import com.epam.engx.explorecalifornia.repository.TourRatingRepository;
 import com.epam.engx.explorecalifornia.repository.TourRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -36,7 +37,7 @@ public class TourRatingController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createTourRating(@PathVariable(value = "tourId") int tourId, @RequestBody @Validated Rating rating) {
+    public void createTourRating(@PathVariable(value = "tourId") int tourId, @RequestBody @Validated RatingDto rating) {
         var tour = verifyTour(tourId);
         tourRatingRepository.save(new TourRating(
             new TourRatingPk(tour, rating.customerId()), rating.score(), rating.comment()));
@@ -49,10 +50,39 @@ public class TourRatingController {
      * @return All Tour Ratings as RatingDto's
      */
     @GetMapping
-    public List<Rating> getAllRatingsForTour(@PathVariable(value = "tourId") int tourId) {
+    public List<RatingDto> getAllRatingsForTour(@PathVariable(value = "tourId") int tourId) {
         verifyTour(tourId);
         return tourRatingRepository.findByPkTourId(tourId).stream()
-            .map(Rating::new).toList();
+            .map(RatingDto::new).toList();
+    }
+
+    /**
+     * Calculate the average Score of a Tour.
+     *
+     * @param tourId tour identifier
+     * @return Tuple of "average" and the average value.
+     */
+    @GetMapping(path = "/average")
+    public Map<String, Double> getAverage(@PathVariable(value = "tourId") int tourId) {
+        verifyTour(tourId);
+        return Map.of("average", tourRatingRepository.findByPkTourId(tourId).stream()
+            .mapToInt(TourRating::getScore).average()
+            .orElseThrow(() -> new NoSuchElementException("Tour has no Ratings")));
+    }
+
+    /**
+     * Verify and return the TourRating for a particular tourId and Customer
+     *
+     * @param tourId     tour identifier
+     * @param customerId customer identifier
+     * @return the found TourRating
+     * @throws NoSuchElementException if no TourRating found
+     */
+    private TourRating verifyTourRating(int tourId, int customerId) throws NoSuchElementException {
+        return tourRatingRepository.findByPkTourIdAndPkCustomerId(tourId, customerId)
+            .orElseThrow(() -> new NoSuchElementException(
+                "Tour-Rating pair for request %d for customer %d".formatted(tourId, customerId))
+            );
     }
 
     /**
