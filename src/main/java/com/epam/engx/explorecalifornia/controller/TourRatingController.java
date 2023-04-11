@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -65,6 +66,20 @@ public class TourRatingController {
     private Tour verifyTour(int tourId) throws NoSuchElementException {
         return tourRepository.findById(tourId).orElseThrow(() ->
             new NoSuchElementException("Tour does not exist " + tourId));
+    }
+
+    /**
+     * Calculate the average Score of a Tour.
+     *
+     * @param tourId tour identifier
+     * @return Tuple of "average" and the average value.
+     */
+    @GetMapping(path = "/average")
+    public Map<String, Double> getAverage(@PathVariable(value = "tourId") int tourId) {
+        verifyTour(tourId);
+        return Map.of("average", tourRatingRepository.findByPkTourId(tourId).stream()
+            .mapToInt(TourRating::getScore).average()
+            .orElseThrow(() -> new NoSuchElementException("Tour has no Ratings")));
     }
 
     /**
