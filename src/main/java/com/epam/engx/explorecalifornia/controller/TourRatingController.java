@@ -30,7 +30,8 @@ public class TourRatingController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createTourRating(@PathVariable(value = "tourId") int tourId, @RequestBody @Validated RatingDto rating) {
+    public void createTourRating(@PathVariable(value = "tourId") int tourId,
+                                 @RequestBody @Validated RatingDto rating) {
         var tour = verifyTour(tourId);
         tourRatingRepository.save(new TourRating(
             new TourRatingPk(tour, rating.customerId()), rating.score(), rating.comment()));
@@ -66,15 +67,36 @@ public class TourRatingController {
     /**
      * Update score and comment of a Tour Rating
      *
-     * @param tourId tour identifier
+     * @param tourId    tour identifier
      * @param ratingDto rating Data Transfer Object
      * @return The modified Rating DTO.
      */
     @PutMapping
-    public RatingDto updateWithPut(@PathVariable(value = "tourId") int tourId, @RequestBody @Validated RatingDto ratingDto) {
+    public RatingDto updateWithPut(@PathVariable(value = "tourId") int tourId,
+                                   @RequestBody @Validated RatingDto ratingDto) {
         var rating = verifyTourRating(tourId, ratingDto.customerId());
         rating.setScore(ratingDto.score());
         rating.setComment(ratingDto.comment());
+        return new RatingDto(tourRatingRepository.save(rating));
+    }
+
+    /**
+     * Update score or comment of a Tour Rating
+     *
+     * @param tourId    tour identifier
+     * @param ratingDto rating Data Transfer Object
+     * @return The modified Rating DTO.
+     */
+    @PatchMapping
+    public RatingDto updateWithPatch(@PathVariable(value = "tourId") int tourId,
+                                     @RequestBody @Validated RatingDto ratingDto) {
+        var rating = verifyTourRating(tourId, ratingDto.customerId());
+        if (ratingDto.score() != null) {
+            rating.setScore(ratingDto.score());
+        }
+        if (ratingDto.comment() != null) {
+            rating.setComment(ratingDto.comment());
+        }
         return new RatingDto(tourRatingRepository.save(rating));
     }
 
