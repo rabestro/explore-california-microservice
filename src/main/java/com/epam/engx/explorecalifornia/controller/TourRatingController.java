@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -38,6 +40,19 @@ public class TourRatingController {
         var tour = verifyTour(tourId);
         tourRatingRepository.save(new TourRating(
             new TourRatingPk(tour, rating.customerId()), rating.score(), rating.comment()));
+    }
+
+    /**
+     * Lookup the Ratings for a tour.
+     *
+     * @param tourId Tour Identifier
+     * @return All Tour Ratings as RatingDto's
+     */
+    @GetMapping
+    public List<Rating> getAllRatingsForTour(@PathVariable(value = "tourId") int tourId) {
+        verifyTour(tourId);
+        return tourRatingRepository.findByPkTourId(tourId).stream()
+            .map(Rating::new).toList();
     }
 
     /**
