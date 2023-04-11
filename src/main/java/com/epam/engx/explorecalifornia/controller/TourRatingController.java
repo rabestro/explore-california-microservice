@@ -7,11 +7,12 @@ import com.epam.engx.explorecalifornia.dto.RatingDto;
 import com.epam.engx.explorecalifornia.repository.TourRatingRepository;
 import com.epam.engx.explorecalifornia.repository.TourRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -44,10 +45,9 @@ public class TourRatingController {
      * @return All Tour Ratings as RatingDto's
      */
     @GetMapping
-    public List<RatingDto> getAllRatingsForTour(@PathVariable(value = "tourId") int tourId) {
+    public Page<RatingDto> getAllRatingsForTour(@PathVariable(value = "tourId") int tourId, Pageable pageable) {
         verifyTour(tourId);
-        return tourRatingRepository.findByPkTourId(tourId).stream()
-            .map(RatingDto::new).toList();
+        return tourRatingRepository.findByPkTourId(tourId, pageable).map(RatingDto::new);
     }
 
     /**
