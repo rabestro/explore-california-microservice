@@ -1,7 +1,5 @@
 package com.epam.engx.explorecalifornia;
 
-import com.epam.engx.explorecalifornia.domain.Difficulty;
-import com.epam.engx.explorecalifornia.domain.Region;
 import com.epam.engx.explorecalifornia.service.TourPackageService;
 import com.epam.engx.explorecalifornia.service.TourService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -15,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
@@ -28,9 +27,9 @@ public class ExploreCaliforniaApplication implements CommandLineRunner {
     @Value("${ec.importfile}")
     private String importFile;
 
-	public static void main(String[] args) {
-		SpringApplication.run(ExploreCaliforniaApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ExploreCaliforniaApplication.class, args);
+    }
 
     @Override
     public void run(String... args) throws Exception {
@@ -41,7 +40,7 @@ public class ExploreCaliforniaApplication implements CommandLineRunner {
     /**
      * Initialize all the known tour packages
      */
-    private void createTourPackages(){
+    private void createTourPackages() {
         tourPackageService.createTourPackage("BC", "Backpack Cal");
         tourPackageService.createTourPackage("CC", "California Calm");
         tourPackageService.createTourPackage("CH", "California Hot springs");
@@ -57,53 +56,47 @@ public class ExploreCaliforniaApplication implements CommandLineRunner {
      * Create tour entities from an external file
      */
     private void createTours(String fileToImport) throws IOException {
-        TourFromFile.read(fileToImport).forEach(importedTour ->
-            tourService.createTour(importedTour.getTitle(),
-                importedTour.getDescription(),
-                importedTour.getBlurb(),
-                importedTour.getPrice(),
-                importedTour.getLength(),
-                importedTour.getBullets(),
-                importedTour.getKeywords(),
-                importedTour.getPackageType(),
-                importedTour.getDifficulty(),
-                importedTour.getRegion()));
+        TourFromFile.read(fileToImport).forEach(tourFromFile ->
+            tourService.createTour(tourFromFile.getTitle(),
+                tourFromFile.getPackageName(), tourFromFile.getDetails())
+        );
     }
 
     /**
      * Helper class to import ExploreCalifornia.json
      */
     private static class TourFromFile {
+        String title;
+        String packageName;
+        Map<String, String> details;
 
-        //fields
-        private String packageType, title, description, blurb, price, length,
-            bullets, keywords, difficulty, region;
+        TourFromFile(Map<String, String> tour) {
+            this.title = tour.get("title");
+            this.packageName = tour.get("packageType");
+            this.details = tour;
+            this.details.remove("packageType");
+            this.details.remove("title");
+        }
 
         //reader
         static List<TourFromFile> read(String fileToImport) throws IOException {
-            return new ObjectMapper().setVisibility(FIELD, ANY).
-                readValue(new FileInputStream(fileToImport), new TypeReference<List<TourFromFile>>() {});
+            var records = new ObjectMapper().setVisibility(FIELD, ANY).
+                readValue(new FileInputStream(fileToImport),
+                    new TypeReference<List<Map<String, String>>>() {
+                    });
+            return records.stream().map(TourFromFile::new).toList();
         }
-        protected TourFromFile(){}
 
-        String getPackageType() { return packageType; }
+        String getTitle() {
+            return title;
+        }
 
-        String getTitle() { return title; }
+        String getPackageName() {
+            return packageName;
+        }
 
-        String getDescription() { return description; }
-
-        String getBlurb() { return blurb; }
-
-        Integer getPrice() { return Integer.parseInt(price); }
-
-        String getLength() { return length; }
-
-        String getBullets() { return bullets; }
-
-        String getKeywords() { return keywords; }
-
-        Difficulty getDifficulty() { return Difficulty.valueOf(difficulty); }
-
-        Region getRegion() { return Region.findByLabel(region); }
+        Map<String, String> getDetails() {
+            return details;
+        }
     }
 }
