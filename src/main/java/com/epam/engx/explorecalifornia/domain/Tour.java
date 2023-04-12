@@ -1,59 +1,55 @@
 package com.epam.engx.explorecalifornia.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Map;
 
-@Data
-@Entity
+/**
+ * The Tour contains all attributes of an Explore California Tour.
+ * Only id, title, and tourPackage are identified and indexed.
+ * The rest of the fields are grouped into a Map.
+ */
+@Document
+@Getter
+@ToString
+@EqualsAndHashCode
 @NoArgsConstructor
-@AllArgsConstructor
 public class Tour implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
-    private Integer id;
+    private String id;
 
-    @Column
+    @Indexed
     private String title;
 
-    @Column(length = 2000)
-    private String description;
+    @Indexed
+    private String tourPackageCode;
 
-    @Column(length = 2000)
-    private String blurb;
+    private String tourPackageName;
 
-    @Column
-    private Integer price;
+    private Map<String, String> details;
 
-    @Column
-    private String duration;
-
-    @Column(length = 2000)
-    private String bullets;
-
-    @Column
-    private String keywords;
-
-    @ManyToOne
-    private TourPackage tourPackage;
-
-    @Column
-    @Enumerated
-    private Difficulty difficulty;
-
-    @Column
-    @Enumerated
-    private Region region;
+    /**
+     * Construct a fully initialized Tour.
+     *
+     * @param title       title of the tour
+     * @param tourPackage tour package
+     * @param details     details about the tour (key-value pairs)
+     */
+    public Tour(String title, TourPackage tourPackage, Map<String, String> details) {
+        this.title = title;
+        this.tourPackageCode = tourPackage.getCode();
+        this.tourPackageName = tourPackage.getName();
+        this.details = details;
+    }
 }

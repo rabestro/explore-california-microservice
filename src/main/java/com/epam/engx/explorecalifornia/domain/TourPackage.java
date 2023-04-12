@@ -1,17 +1,19 @@
 package com.epam.engx.explorecalifornia.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * A Classification of Tours.
+ */
+@Document
 @Data
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class TourPackage implements Serializable {
@@ -21,6 +23,5 @@ public class TourPackage implements Serializable {
     @Id
     private String code;
 
-    @Column
     private String name;
 }

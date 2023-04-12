@@ -1,23 +1,48 @@
 package com.epam.engx.explorecalifornia.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Rating of a Tour by a Customer
+ */
+@Document
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Entity
 public class TourRating {
-    @EmbeddedId
-    private TourRatingPk pk;
+    @Id
+    private String id;
 
-    @Column(nullable = false)
+    private String tourId;
+
+    @NotNull
+    private Integer customerId;
+
+    @Min(0)
+    @Max(5)
     private Integer score;
 
-    @Column
+    @Size(max = 255)
     private String comment;
+
+    /**
+     * Construct a new Tour Rating.
+     *
+     * @param tourId tour identifier
+     * @param customerId customer identifier
+     * @param score Integer score (1-5)
+     * @param comment Optional comment from the customer
+     */
+    public TourRating(String tourId, Integer customerId, Integer score, String comment) {
+        this.tourId = tourId;
+        this.customerId = customerId;
+        this.score = score;
+        this.comment = comment;
+    }
 }
