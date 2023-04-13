@@ -1,8 +1,17 @@
 ### Get All Tours
 GET {{host}}/tours
 
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
 ### Get All Tour Packages
 GET {{host}}/packages
+
+### Lookup Backpack California Tours
+GET {{host}}/tours/search/findByTourPackageCode?code=BC
 
 ### Create Rating
 POST {{host}}/tours/1/ratings
@@ -16,3 +25,11 @@ Content-Type: application/json
 
 ### Lookup Rating
 GET {{host}}/tours/1/ratings
+
+### Lookup Average Score
+GET {{host}}/tours/1/ratings/average
+
+> test/lookup-average-score.js
+
+### Update a Rating
+PUT {{host}}/tours/1/ratings
