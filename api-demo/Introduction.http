@@ -1,0 +1,18 @@
+### Get All Tours
+GET {{host}}/tours
+
+### Get All Tour Packages
+GET {{host}}/packages
+
+### Create Rating
+POST {{host}}/tours/1/ratings
+Content-Type: application/json
+
+{
+  "score": 5,
+  "comment": "I thought it was ok",
+  "customerId": 8
+}
+
+### Lookup Rating
+GET {{host}}/tours/1/ratings
