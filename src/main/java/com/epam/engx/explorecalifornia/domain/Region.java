@@ -20,4 +20,8 @@ public enum Region {
             .findAny()
             .orElse(null);
     }
+
+    public String getLabel() {
+        return label;
+    }
 }
