@@ -6,17 +6,20 @@ import com.epam.engx.explorecalifornia.repository.TourRatingRepository;
 import com.epam.engx.explorecalifornia.repository.TourRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.OptionalDouble;
 
 /**
  * Tour Rating Service
  */
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -36,6 +39,26 @@ public class TourRatingService {
     public void createNew(int tourId, Integer customerId, Integer score, String comment) throws NoSuchElementException {
         tourRatingRepository.save(new TourRating(verifyTour(tourId), customerId,
             score, comment));
+    }
+
+    /**
+     * Get a ratings by id.
+     *
+     * @param id rating identifier
+     * @return TourRatings
+     */
+    public Optional<TourRating> lookupRatingById(int id)  {
+        return tourRatingRepository.findById(id);
+    }
+
+    /**
+     * Get All Ratings.
+     *
+     * @return List of TourRatings
+     */
+    public List<TourRating> lookupAll()  {
+        log.info("Lookup all Ratings");
+        return tourRatingRepository.findAll();
     }
 
     /**
