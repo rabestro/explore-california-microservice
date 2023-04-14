@@ -8,6 +8,6 @@ import jakarta.validation.constraints.Size;
 
 public record RatingDto(@Min(0) @Max(5) Integer score, @Size(max = 255) String comment, @NotNull Integer customerId) {
     public RatingDto(TourRating tourRating) {
-        this(tourRating.getScore(), tourRating.getComment(), tourRating.getPk().getCustomerId());
+        this(tourRating.getScore(), tourRating.getComment(), tourRating.getCustomerId());
     }
 }
