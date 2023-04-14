@@ -1,5 +1,5 @@
 plugins {
-	id 'java'
+	id 'groovy'
     id 'io.freefair.lombok' version "8.0.1"
 	id 'org.springframework.boot' version '3.0.5'
 	id 'io.spring.dependency-management' version '1.1.0'
@@ -10,11 +10,33 @@ group = 'com.epam.engx'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+}
+
+sourceSets {
+    integration {
+        groovy.srcDir "$projectDir/src/integration/groovy"
+        resources.srcDir "$projectDir/src/integration/resources"
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+    integrationImplementation.extendsFrom testImplementation
+    integrationRuntime.extendsFrom testRuntime
 }
+
+tasks.register('integrationTest', Test) {
+    testClassesDirs = sourceSets.integration.output.classesDirs
+    classpath = sourceSets.integration.runtimeClasspath
+}
+
+check.dependsOn integrationTest
 
 repositories {
 	mavenCentral()
