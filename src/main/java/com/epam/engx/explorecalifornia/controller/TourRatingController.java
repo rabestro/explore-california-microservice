@@ -34,7 +34,7 @@ public class TourRatingController {
     public void createTourRating(@PathVariable(value = "tourId") int tourId,
                                  @RequestBody @Validated RatingDto ratingDto) {
         log.info("POST /tours/{}/ratings", tourId);
-        tourRatingService.createNew(tourId, ratingDto.customerId(), ratingDto.score(), ratingDto.comment());
+        tourRatingService.createNew(tourId, ratingDto.getCustomerId(), ratingDto.getScore(), ratingDto.getComment());
     }
 
     /**
@@ -91,8 +91,8 @@ public class TourRatingController {
     @PutMapping
     public RatingDto updateWithPut(@PathVariable(value = "tourId") int tourId,
                                    @RequestBody @Validated RatingDto ratingDto) {
-        return toDto(tourRatingService.update(tourId, ratingDto.customerId(),
-            ratingDto.score(), ratingDto.comment()));
+        return toDto(tourRatingService.update(tourId, ratingDto.getCustomerId(),
+            ratingDto.getScore(), ratingDto.getComment()));
     }
 
 
@@ -105,8 +105,8 @@ public class TourRatingController {
      */
     @PatchMapping
     public RatingDto updateWithPatch(@PathVariable(value = "tourId") int tourId, @RequestBody @Validated RatingDto ratingDto) {
-        return toDto(tourRatingService.updateSome(tourId, ratingDto.customerId(),
-            ratingDto.score(), ratingDto.comment()));
+        return toDto(tourRatingService.updateSome(tourId, ratingDto.getCustomerId(),
+            ratingDto.getScore(), ratingDto.getComment()));
     }
 
     /**
