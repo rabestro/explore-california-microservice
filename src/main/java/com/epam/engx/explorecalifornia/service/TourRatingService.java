@@ -83,7 +83,7 @@ public class TourRatingService {
      * @throws NoSuchElementException if no Tour found.
      */
     public TourRating update(int tourId, Integer customerId, Integer score, String comment) throws NoSuchElementException {
-        TourRating rating = verifyTourRating(tourId, customerId);
+        var rating = verifyTourRating(tourId, customerId);
         rating.setScore(score);
         rating.setComment(comment);
         return tourRatingRepository.save(rating);
@@ -119,7 +119,7 @@ public class TourRatingService {
      * @throws NoSuchElementException if no Tour found.
      */
     public void delete(int tourId, Integer customerId) throws NoSuchElementException {
-        TourRating rating = verifyTourRating(tourId, customerId);
+        var rating = verifyTourRating(tourId, customerId);
         tourRatingRepository.delete(rating);
     }
 
@@ -131,8 +131,8 @@ public class TourRatingService {
      * @throws NoSuchElementException
      */
     public Double getAverageScore(int tourId) throws NoSuchElementException {
-        List<TourRating> ratings = tourRatingRepository.findByTourId(verifyTour(tourId).getId());
-        OptionalDouble average = ratings.stream().mapToInt(TourRating::getScore).average();
+        var ratings = tourRatingRepository.findByTourId(verifyTour(tourId).getId());
+        var average = ratings.stream().mapToInt(TourRating::getScore).average();
         return average.isPresent() ? average.getAsDouble() : null;
     }
 
@@ -178,6 +178,4 @@ public class TourRatingService {
             new NoSuchElementException("Tour-Rating pair for request("
                                        + tourId + " for customer" + customerId));
     }
-
-
 }
