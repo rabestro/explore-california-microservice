@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.OptionalDouble;
 
 /**
  * Tour Rating Service
@@ -47,7 +46,7 @@ public class TourRatingService {
      * @param id rating identifier
      * @return TourRatings
      */
-    public Optional<TourRating> lookupRatingById(int id)  {
+    public Optional<TourRating> lookupRatingById(int id) {
         return tourRatingRepository.findById(id);
     }
 
@@ -56,7 +55,7 @@ public class TourRatingService {
      *
      * @return List of TourRatings
      */
-    public List<TourRating> lookupAll()  {
+    public List<TourRating> lookupAll() {
         log.info("Lookup all Ratings");
         return tourRatingRepository.findAll();
     }
