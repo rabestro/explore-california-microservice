@@ -4,7 +4,6 @@ plugins {
 	id 'org.springframework.boot' version '3.0.5'
 	id 'io.spring.dependency-management' version '1.1.0'
     id 'org.asciidoctor.convert' version '2.4.0'
-    id 'org.flywaydb.flyway' version '9.16.3'
 }
 
 group = 'com.epam.engx'
@@ -53,6 +52,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.data:spring-data-rest-hal-explorer'
+    implementation 'org.flywaydb:flyway-core'
 
 	runtimeOnly 'com.h2database:h2'
     compileOnly 'org.projectlombok:lombok'
